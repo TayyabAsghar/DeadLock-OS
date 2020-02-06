@@ -1,0 +1,7 @@
+Debug/
+Operating System/Debug/
+Operating System/*.vcxproj
+Operating System/*.vcxproj.filters
+Operating System/*.vcxproj.user
+*.vs
+*.sln
