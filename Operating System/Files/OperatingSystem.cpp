@@ -28,7 +28,7 @@ OperatingSystem& OperatingSystem::Delete(Node*& Ptr)                            
 	return *this;
 }
 
-bool OperatingSystem::IsGreater(string rptr, string ptr)      //It will fail after 9.
+bool OperatingSystem::IsGreater(string rptr, string ptr)      // It will fail after 9.
 {
 	int Size = rptr.size();
 
