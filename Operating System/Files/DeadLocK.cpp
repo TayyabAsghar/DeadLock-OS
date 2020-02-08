@@ -61,11 +61,12 @@ void Desktop(OperatingSystem& OS)
 	void Time();
 
 	int Action = -1;
+	const size_t SIZE = 4;                        // Icons string array Size;
 	string PC    = "\n\n\n     --> This PC <--\n\n\n    Recycle Bin \n\n\n    Control Panel \n\n\n    Clock ";
 	string Bin   = "\n\n\n    This PC \n\n\n     --> Recycle Bin <--\n\n\n    Control Panel \n\n\n    Clock ";
 	string CP    = "\n\n\n    This PC \n\n\n    Recycle Bin \n\n\n     --> Control Panel <--\n\n\n    Clock ";
 	string Clock = "\n\n\n    This PC \n\n\n    Recycle Bin \n\n\n    Control Panel \n\n\n     --> Clock <--";
-	vector<string> Icons = {PC, Bin, CP, Clock};
+	string Icons[SIZE] = {PC, Bin, CP, Clock};
 	string NewLines = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
 	size_t Icon = 0;
 
@@ -80,7 +81,7 @@ void Desktop(OperatingSystem& OS)
 			switch (Action)
 			{
 			case DOWN:
-				if (Icon < (Icons.size() - 1))
+				if (Icon < (SIZE - 1))
 					++Icon;
 				break;
 
@@ -177,13 +178,18 @@ void NewDrive(OperatingSystem& OS)
 	string Name;
 	Node* Ptr;
 
-	DriveCredentials(Name, OS);
-
-	if (!Name.empty())
+	if (OS.ItemsCount() < 2)                              // Manage how many Drives we can add.
 	{
-		Ptr = new Node(Name, _DRIVE);
-		OS.AddDrive(Ptr);
+		DriveCredentials(Name, OS);
+
+		if (!Name.empty())
+		{
+			Ptr = new Node(Name, _DRIVE);
+			OS.AddDrive(Ptr);
+		}
 	}
+	else
+		cout << " Drives Partition Exceeding it's Limit.";
 }
 
 void NewFile(OperatingSystem& OS)
@@ -274,7 +280,7 @@ void ReName(OperatingSystem& OS)
 	string Extention = "";
 	bool Clear;
 
-	if(OS.GetType() == _FILE)
+	if (OS.GetType() == _FILE)
 	{
 		size_t Pos = OldName.find_last_of(".");
 		Extention = OldName.substr(Pos, (OldName.size() - 1));
@@ -430,10 +436,11 @@ void Apps(OperatingSystem& OS)
 
 	int Action = -1;
 	int op = -1;
+	const size_t SIZE = 7;                        // Option array Size.
 	size_t loop;
 	string NewLines = "\n\n\n    ";
 	string Tabs = "\t\t\t\t\t";
-	vector<string> Options = { "Open", "Add Folder", "Add File", "Rename", "Format", "Delete", "Refresh"};
+	string Options[SIZE] = { "Open", "Add Folder", "Add File", "Rename", "Format", "Delete", "Refresh"};
 
 
 	system("CLS");
@@ -449,7 +456,7 @@ void Apps(OperatingSystem& OS)
 			else
 				cout << "\n" << Tabs << "> " << OS.GetName() << "\n\n";
 
-			while (loop < Options.size())
+			while (loop < SIZE)
 			{
 				if (OS.GetType() == _DRIVE)              // To show selected options on Drive
 					while (true)
@@ -488,7 +495,7 @@ void Apps(OperatingSystem& OS)
 
 			case DOWN:
 			{
-				if (op < static_cast<char> (Options.size() - 1))
+				if (op < static_cast<int> (SIZE - 1))
 				{
 					++op;
 
@@ -550,8 +557,6 @@ void Apps(OperatingSystem& OS)
 		}
 
 		if (Action == ENTER)
-		{
-
 			switch (op)		                                     // Options Selection
 			{
 			case 0:
@@ -583,7 +588,6 @@ void Apps(OperatingSystem& OS)
 				system("CLS");
 				Sleep(20);
 			}
-		}
 		Action = EXIT;                                     // Clearing Action.
 		system("CLS");
 	}
@@ -591,18 +595,141 @@ void Apps(OperatingSystem& OS)
 
 void ControlPanel(OperatingSystem& OS)
 {
-	string Report = "";
-	string NewLines = "\n\n\n\n\n\n\n\n\n\n";
-	string Tabs = "\t\t\t\t\t";
-	string Account = "---Adding New Account---";
+	void UsersControls(OperatingSystem& OS);
+	void DrivesControls(OperatingSystem& OS);
 
-	cout << CPANEL << Tabs << Account << NewLines;
-	cout << Tabs << " Type User Name : ";
-	//getline(cin, name);
-	Sleep(400);
+	int Action = -1;
+	int op = 0;
+	const size_t SIZE = 2;
+	string NewLines = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
+	string Tabs = "\t\t";
+	string Controls[SIZE] = { "Users Controls", "Drives Controls" };
+
+	while (Action != BACK)
+	{
+		while (!((Action == ENTER) || (Action == BACK)))
+		{
+			cout << CPANEL << "\n\n\n";
+
+			for (size_t i = 0; i < SIZE; ++i)
+				if (op == i)
+					cout << Tabs << "  --> " << Controls[i] << " <--\n\n\n";
+				else
+					cout << Tabs << Controls[i] << "\n\n\n";
+
+			cout << NewLines << "\t" << SIZE << " Items    1 Item selected \n";
+
+			Action = KeysInput();                                 // Take Input From Keys
+
+			switch (Action)
+			{
+			case BACK:
+				break;
+
+			case DOWN:
+				if (op < (SIZE - 1))
+					++op;
+				break;
+
+			case ENTER:
+				break;
+
+			case UP:
+				if (op > 0)
+					--op;
+			}
+			system("CLS");
+		}
+
+		if (Action == ENTER)
+		{
+			Action = -1;                      // Clearing the Action.
+
+			switch (op)
+			{
+			case 0:
+				UsersControls (OS);
+				break;
+
+			case 1:
+				DrivesControls (OS);
+			}
+		}
+	}
 	system("CLS");
-	//NewUser(OS);
-	//NewDrive(OperatingSystem& OS)
+}
+
+void DrivesControls(OperatingSystem& OS)
+{
+	int Action = -1;
+	int op = 0;
+	const size_t SIZE = 4;
+	string NewLines = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
+	string Tabs = "\t\t";
+	string User = "Users Controls";
+	string Drives = "Drives Controls";
+	string Controls[SIZE] = {User, Drives};
+
+	while (Action != BACK)
+	{
+		while (!((Action == ENTER) || (Action == BACK)))
+		{
+			cout << CPANEL << "\n\n\n";
+
+			for (size_t i = 0; i < SIZE; ++i)
+				if (op == i)
+					cout << Tabs << "  --> " << Controls[i] << " <--\n\n\n";
+				else
+					cout << Tabs << Controls[i] << "\n\n\n";
+
+			cout << NewLines << "\t" << SIZE << " Items    1 Item selected \n";
+
+			Action = KeysInput();                                 // Take Input From Keys
+
+			switch (Action)
+			{
+			case BACK:
+				break;
+
+			case DOWN:
+				if (op < (SIZE - 1))
+					++op;
+				break;
+
+			case ENTER:
+				break;
+
+			case UP:
+				if (op > 0)
+					--op;
+			}
+			system("CLS");
+		}
+
+		if (Action == ENTER)
+		{
+			Action = -1;                      // Clearing the Action.
+
+			switch (op)
+			{
+			case 0:
+				//UsersControls(OS);
+				break;
+
+			case 1:
+				NewDrive (OS);
+				break;
+
+			case 2:
+				// Delete()
+				break;
+
+			case 3:
+				//Format();
+			}
+		}
+	}
+	system("CLS");
 }
 
 void DriveCredentials(string& name, OperatingSystem& OS)
@@ -646,19 +773,20 @@ string FileType()
 {
 	int Action = -1;
 	size_t File = 0;
+	const size_t SIZE = 6;                     // Files Array size.
 	string Access = "Microsoft Access Database";
 	string Word = "Microsoft Word Document";
 	string Point = "Microsoft PowerPoint Presentation";
 	string Publisher = "Microsoft Publisher Document";
 	string Text = "Text Document";
 	string Excel = "Microsoft Excel Worksheet";
-	vector<string> Files = { Access , Word, Point, Publisher, Text, Excel };
+	string Files[SIZE] = {Access, Word, Point, Publisher, Text, Excel};
 
 	while (!((Action == ENTER) || (Action == APPS)))
 	{
 		cout << "\n\t\t\t\t\t New " << Files[File] << "\n";
 
-		for (int i = 0; i < 6; ++i)
+		for (int i = 0; i < SIZE; ++i)
 			if (i == File)
 				cout << "\n\n\n       --> " << Files[i] << " <--";
 			else
@@ -673,7 +801,7 @@ string FileType()
 			break;
 
 		case DOWN:
-			if (File < (Files.size() - 1))
+			if (File < (SIZE - 1))
 				++File;
 			break;
 
@@ -875,6 +1003,11 @@ void Time()
 
 	for (int i = 0; i < 8; ++i)
 		cout << Tabs << Tabs << Divider << "\n";
+}
+
+void UsersControls(OperatingSystem& OS)
+{
+
 }
 
 void UserCredentials(string& name, string& pass, string& hint, OperatingSystem& OS)

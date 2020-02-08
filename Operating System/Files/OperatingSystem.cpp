@@ -7,7 +7,7 @@ bool OperatingSystem::Compare(string Str_1, string Str_2)
 	transform(Str_1.begin(), Str_1.end(), Str_1.begin(), ::tolower);
 	transform(Str_2.begin(), Str_2.end(), Str_2.begin(), ::tolower);
 
-	if (Str_1.size() < Str_2.size())
+	if (Str_1.size() < Str_2.size())                               // Loop Size will be smaller string.
 		Size = Str_2.size();
 
 	for (int i = 0; i < Size; ++i)
@@ -38,7 +38,7 @@ bool OperatingSystem::IsGreater(string rptr, string ptr)      // It will fail af
 	if (rptr.size() > ptr.size())
 		Size = ptr.size();
 
-	for (int i = 0; i < Size; ++i)
+	for (int i = 0; i < Size; ++i)                           // Loop will continue until  both are same.
 	{
 		if (rptr[i] > ptr[i])
 			return false;
@@ -95,18 +95,18 @@ OperatingSystem& OperatingSystem::AddDrive(Node* &Ptr)
 	}
 	else
 	{
-		const string DrivePostfix = "CDEFGHIJKL";
+		char DrivePostfix = 'C';
 		string Name;
 		int Postfix = 0;
 
 		Rptr = Sptr->Down;
 
-		while (true)
+		while (true)     // To find correct PostFix, Loop will be control mostly in DeadLocK.cpp 
 		{
 			Name = Rptr->GetName();
 
-			if (Name[Name.length() - 3] == DrivePostfix[Postfix])
-				++Postfix;                                         // Search with next Character
+			if (Name[Name.length() - 3] == DrivePostfix)
+				++DrivePostfix;                                    // Search with next Character
 			else
 				Rptr = Rptr->Prev;
 
@@ -116,7 +116,7 @@ OperatingSystem& OperatingSystem::AddDrive(Node* &Ptr)
 				break;
 		}
 
-		Ptr->SetName(Ptr->GetName() + " (" + DrivePostfix[Postfix] + ":)");
+		Ptr->SetName(Ptr->GetName() + " (" + DrivePostfix + ":)");
 
 		if (Rptr->Next)                                                // Between Nodes
 		{
@@ -367,7 +367,7 @@ vector<string> OperatingSystem::GetList()
 				Name.push_back("--> " + rptr->GetName() + " <--");
 			else
 				Name.push_back(rptr->GetName());
-		++Count;
+			++Count;
 		}
 		rptr = rptr->Next;
 	}
@@ -395,6 +395,20 @@ int OperatingSystem::GetType()
 	if (Rptr)
 		return Rptr->GetType();
 	return -1;
+}
+
+int OperatingSystem::ItemsCount()
+{
+	int Count = 0;
+	Node* rptr = Sptr->Down;
+
+	while (rptr->Next)
+	{
+		rptr->Next; 
+		++Count;
+	}
+
+	return Count;
 }
 
 void OperatingSystem::MoveIn()

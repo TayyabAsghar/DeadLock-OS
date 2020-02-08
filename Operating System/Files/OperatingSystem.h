@@ -35,6 +35,7 @@ public:
 	string GetName();
 	string GetPass();
 	int GetType();
+	int ItemsCount();
 	void MoveIn();
 	void MoveNext();
 	void MoveOut();
