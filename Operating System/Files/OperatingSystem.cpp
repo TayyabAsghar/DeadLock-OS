@@ -402,9 +402,9 @@ int OperatingSystem::ItemsCount()
 	int Count = 0;
 	Node* rptr = Sptr->Down;
 
-	while (rptr->Next)
+	while (rptr)
 	{
-		rptr->Next; 
+		rptr = rptr->Next; 
 		++Count;
 	}
 

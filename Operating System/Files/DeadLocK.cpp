@@ -10,7 +10,7 @@
 using namespace std;
 
 constexpr auto CPANEL = " | Control Panel | ";
-constexpr auto DriveControls = " \>\> |DrivesControls|";
+constexpr auto DriveControls = " \>\> | DrivesControls |";
 constexpr auto DLK = R"(
 				.-----------.      |''|            |''|   /''/
 				'  .-----.  |      |  |            |  |  /  /
@@ -179,7 +179,7 @@ void NewDrive(OperatingSystem& OS)
 	string Name;
 	Node* Ptr;
 
-	if (OS.ItemsCount() < 2)                              // Manage how many Drives we can add.
+	if (OS.ItemsCount() < 7)                              // Manage how many Drives we can add.
 	{
 		DriveCredentials(Name, OS);
 
@@ -596,8 +596,8 @@ void Apps(OperatingSystem& OS)
 
 void ControlPanel(OperatingSystem& OS)
 {
-	void UsersControls(OperatingSystem& OS);
 	void DrivesControls(OperatingSystem& OS);
+	void UsersControls(OperatingSystem& OS);
 
 	int Action = -1;
 	int op = 0;
@@ -718,7 +718,7 @@ void DrivesControls(OperatingSystem& OS)
 				break;
 
 			case 1:
-				NewDrive (OS);
+				NewDrive(OS);
 				break;
 
 			case 2:
@@ -737,11 +737,13 @@ void DrivesControls(OperatingSystem& OS)
 void DriveCredentials(string& name, OperatingSystem& OS)
 {
 	string Report = "";
-	string NewLines = "\n\n\n\n\n\n\n\n\n\n\n\n";
+	string NewLines = "\n\n\n\n\n\n\n\n\n\n\n";
 	string Tabs = "\t\t\t\t\t";
+	string Drive = " | New Drive |";
 	string Account = "---Adding New Drive---";
 
-	cout << CPANEL << "\n" << Tabs << Account << NewLines;
+	cout << CPANEL << DriveControls << Drive << "\n\n";
+	cout << Tabs << Account << NewLines;
 	cout << Tabs << " Type Drive Name : ";
 	getline(cin, name);
 	Sleep(400);
@@ -749,8 +751,9 @@ void DriveCredentials(string& name, OperatingSystem& OS)
 
 	Trim(name);
 	                                                          // Final View With Report
-	cout << CPANEL << "\n" << Tabs << Account << NewLines;
-	cout << Tabs << " Type Drive Name : " << name << "\n\n";
+	cout << CPANEL << DriveControls << Drive << "\n\n";
+	cout << Tabs << Account << NewLines;
+	cout << Tabs << " Type Drive Name : " << name << "\n\n\n";
 	cout << NewLines;
 
 	if (name.empty())                                        // Test to check Empty String.
@@ -1083,22 +1086,25 @@ void ViewDrives(OperatingSystem& OS)
 {
 	int Action = -1;
 	string NewLines = "\n\n\n\n\n\n\n\n\n\n\n\n";
-	string Tabs = "\t\t\t\t\t";
+	string Tabs = "\t\t";
 	vector<string> Name;
 	string View = " \>\> | View Drives |";
-	size_t Size = Name.size() - 1;
+	size_t Size;
 
 	while (Action != BACK)
 	{
 		Name = OS.GetList();
+		Size = Name.size() - 1;
 
 		cout << CPANEL << DriveControls << View  << "\n\n\n\n";
 		
 		for (size_t i = 0; i < Size; ++i)
 			cout << Tabs << Name[i] << "\n\n\n";
 
-		for (size_t i = 0; i < (26 - (Size * 3)); ++i)
+		for (size_t i = 0; i < (24 - (Size * 3)); ++i)
 			cout << "\n";
+
+		cout << "\t" << OS.ItemsCount() << " Items    1 Item selected \n";
 		
 		Action = KeysInput();
 
