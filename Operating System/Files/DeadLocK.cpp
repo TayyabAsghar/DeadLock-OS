@@ -9,7 +9,8 @@
 
 using namespace std;
 
-constexpr auto CPANEL = " | Control Panel | \n";
+constexpr auto CPANEL = " | Control Panel | ";
+constexpr auto DriveControls = " \>\> |DrivesControls|";
 constexpr auto DLK = R"(
 				.-----------.      |''|            |''|   /''/
 				'  .-----.  |      |  |            |  |  /  /
@@ -609,7 +610,7 @@ void ControlPanel(OperatingSystem& OS)
 	{
 		while (!((Action == ENTER) || (Action == BACK)))
 		{
-			cout << CPANEL << "\n\n\n";
+			cout << CPANEL << "\n\n\n\n";
 
 			for (size_t i = 0; i < SIZE; ++i)
 				if (op == i)
@@ -661,20 +662,20 @@ void ControlPanel(OperatingSystem& OS)
 
 void DrivesControls(OperatingSystem& OS)
 {
+	void ViewDrives(OperatingSystem & OS);
+
 	int Action = -1;
 	int op = 0;
 	const size_t SIZE = 4;
-	string NewLines = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
+	string NewLines = "\n\n\n\n\n\n\n\n\n\n\n\n";
 	string Tabs = "\t\t";
-	string User = "Users Controls";
-	string Drives = "Drives Controls";
-	string Controls[SIZE] = {User, Drives};
+	string Controls[SIZE] = {"View Partitions", "Add New Partition", "Delete Partition", "Format Partition"};
 
 	while (Action != BACK)
 	{
 		while (!((Action == ENTER) || (Action == BACK)))
 		{
-			cout << CPANEL << "\n\n\n";
+			cout << CPANEL << DriveControls << "\n\n\n\n";
 
 			for (size_t i = 0; i < SIZE; ++i)
 				if (op == i)
@@ -713,7 +714,7 @@ void DrivesControls(OperatingSystem& OS)
 			switch (op)
 			{
 			case 0:
-				//UsersControls(OS);
+				ViewDrives(OS);
 				break;
 
 			case 1:
@@ -726,6 +727,7 @@ void DrivesControls(OperatingSystem& OS)
 
 			case 3:
 				//Format();
+				break;
 			}
 		}
 	}
@@ -739,7 +741,7 @@ void DriveCredentials(string& name, OperatingSystem& OS)
 	string Tabs = "\t\t\t\t\t";
 	string Account = "---Adding New Drive---";
 
-	cout << CPANEL << Tabs << Account << NewLines;
+	cout << CPANEL << "\n" << Tabs << Account << NewLines;
 	cout << Tabs << " Type Drive Name : ";
 	getline(cin, name);
 	Sleep(400);
@@ -747,7 +749,7 @@ void DriveCredentials(string& name, OperatingSystem& OS)
 
 	Trim(name);
 	                                                          // Final View With Report
-	cout << CPANEL << Tabs << Account << NewLines;
+	cout << CPANEL << "\n" << Tabs << Account << NewLines;
 	cout << Tabs << " Type Drive Name : " << name << "\n\n";
 	cout << NewLines;
 
@@ -891,7 +893,7 @@ void ThisPC(OperatingSystem& OS)
 			cout << "\n" << Tabs << Tabs << " This Is Empty." << NewLines << "\t0 Items    0 Item selected \n";
 		else
 		{
-			if (OS.GetType() == _DRIVE)
+			if (OS.GetType() == _DRIVE)                  // For Drives.
 			{
 				for (size_t i = 0; i < Size; ++i)
 					cout << "\n\n" << Tabs << "\t" << Name[i] << "\n";
@@ -1017,7 +1019,7 @@ void UserCredentials(string& name, string& pass, string& hint, OperatingSystem& 
 	string Tabs = "\t\t\t\t\t\t";
 	string Account = "---Adding New Account---";
 														// Name Input
-	cout << CPANEL << Tabs << Account << NewLines;
+	cout << CPANEL << "\n" << Tabs << Account << NewLines;
 	cout << Tabs << " Type User Name : ";
 	getline(cin, name);
 	Sleep(400);
@@ -1025,14 +1027,14 @@ void UserCredentials(string& name, string& pass, string& hint, OperatingSystem& 
 
 	Trim(name);
 														// Password Input
-	cout << CPANEL << Tabs << Account << NewLines;
+	cout << CPANEL << "\n" << Tabs << Account << NewLines;
 	cout << Tabs << " Type User Name : " << name << "\n\n";
 	cout << Tabs << " Type Password : ";
 	getline(cin, pass);
 	Sleep(400);
 	system("CLS");
 														// Hint Input / Final View with Report
-	cout << CPANEL << Tabs << Account << NewLines;
+	cout << CPANEL << "\n" << Tabs << Account << NewLines;
 	cout << Tabs << " Type User Name : " << name << "\n\n";
 	cout << Tabs << " Type Password : " << pass << "\n\n";
 
@@ -1043,7 +1045,7 @@ void UserCredentials(string& name, string& pass, string& hint, OperatingSystem& 
 		Sleep(400);
 		system("CLS");
 														// Final View with Report
-		cout << CPANEL << Tabs << Account << NewLines;
+		cout << CPANEL << "\n" << Tabs << Account << NewLines;
 		cout << Tabs << " Type User Name : " << name << "\n\n";
 		cout << Tabs << " Type Password : " << pass << "\n\n";
 		cout << Tabs << " Type Password Hint : " << hint << "\n\n";
@@ -1075,4 +1077,40 @@ void UserCredentials(string& name, string& pass, string& hint, OperatingSystem& 
 
 	Sleep(1300);
 	system("CLS");
+}
+
+void ViewDrives(OperatingSystem& OS)
+{
+	int Action = -1;
+	string NewLines = "\n\n\n\n\n\n\n\n\n\n\n\n";
+	string Tabs = "\t\t\t\t\t";
+	vector<string> Name;
+	string View = " \>\> | View Drives |";
+	size_t Size = Name.size() - 1;
+
+	while (Action != BACK)
+	{
+		Name = OS.GetList();
+
+		cout << CPANEL << DriveControls << View  << "\n\n\n\n";
+		
+		for (size_t i = 0; i < Size; ++i)
+			cout << Tabs << Name[i] << "\n\n\n";
+
+		for (size_t i = 0; i < (26 - (Size * 3)); ++i)
+			cout << "\n";
+		
+		Action = KeysInput();
+
+		switch (Action)
+		{
+		case DOWN:
+			OS.MoveNext();
+			break;
+
+		case UP:
+			OS.MovePrev();
+		}
+		system("CLS");
+	}
 }
