@@ -81,7 +81,12 @@ Node* OperatingSystem::Remove()
 	return Ptr;
 }
 
-OperatingSystem::OperatingSystem() : Head(NULL), Rptr(NULL), Sptr(NULL)
+bool OperatingSystem::Administrator()
+{
+	return Uptr->GetDel();
+}
+
+OperatingSystem::OperatingSystem() : Head(NULL), Rptr(NULL), Sptr(NULL), Uptr(NULL)
 {}
 
 OperatingSystem& OperatingSystem::AddDrive(Node* &Ptr)
@@ -270,7 +275,7 @@ OperatingSystem& OperatingSystem::AddUser(Node*& Ptr)
 		Rptr->Prev = Sptr;
 	}
 	Rptr->Down = Rptr->Up = NULL;
-	Sptr = Rptr;                                           // Both Pointing to Last User
+	Uptr = Sptr = Rptr;                                           // Both Pointing to Last User
 	Ptr = NULL;
 
 	return *this;
@@ -340,7 +345,7 @@ vector<string> OperatingSystem::GetDeletedList()                          // HAH
 
 string OperatingSystem::GetHint()
 {
-	return Rptr->GetHint();
+	return Uptr->GetHint();
 }
 
 vector<string> OperatingSystem::GetList()
@@ -387,7 +392,7 @@ string OperatingSystem::GetName()
 
 string OperatingSystem::GetPass()
 {
-	return Rptr->GetPass();
+	return Uptr->GetPass();
 }
 
 int OperatingSystem::GetType()
@@ -395,6 +400,25 @@ int OperatingSystem::GetType()
 	if (Rptr)
 		return Rptr->GetType();
 	return -1;
+}
+
+vector<string> OperatingSystem::GetUserList()
+{
+	Node* rptr = Head;
+	vector<string> Name;
+	int Count = 0;
+
+	while (rptr)
+	{
+		Name.push_back(rptr->GetName());
+		rptr = rptr->Next;
+		++Count;
+	}
+
+	if (Count)
+		Name.push_back(to_string(Count));
+
+	return Name;
 }
 
 int OperatingSystem::ItemsCount()
@@ -431,7 +455,7 @@ void OperatingSystem::MoveNext()
 	}
 
 	if (Rptr->GetType() == _USER)                  // If we are switching user then set Sptr to last Rptr.
-		Sptr = Rptr;
+		Uptr = Sptr = Rptr;
 }
 
 void OperatingSystem::MoveOut()
@@ -456,7 +480,7 @@ void OperatingSystem::MovePrev()
 	}
 
 	if (Rptr->GetType() == _USER)                  // If we are switching user then set Sptr to last Rptr.
-		Sptr = Rptr;
+		Uptr = Sptr = Rptr;
 }
 
 void OperatingSystem::MoveStart()

@@ -10,7 +10,8 @@
 using namespace std;
 
 constexpr auto CPANEL = " | Control Panel | ";
-constexpr auto DriveControls = " \>\> | DrivesControls |";
+constexpr auto DriveControls = " >> | Drives Controls |";
+constexpr auto UserControls = " >> | Users Controls |";
 constexpr auto DLK = R"(
 				.-----------.      |''|            |''|   /''/
 				'  .-----.  |      |  |            |  |  /  /
@@ -739,7 +740,7 @@ void DriveCredentials(string& name, OperatingSystem& OS)
 	string Report = "";
 	string NewLines = "\n\n\n\n\n\n\n\n\n\n\n";
 	string Tabs = "\t\t\t\t\t";
-	string Drive = " | New Drive |";
+	string Drive = " | New Partition |";
 	string Account = "---Adding New Drive---";
 
 	cout << CPANEL << DriveControls << Drive << "\n\n";
@@ -1012,17 +1013,112 @@ void Time()
 
 void UsersControls(OperatingSystem& OS)
 {
+	bool Verification(OperatingSystem& OS);
+	void ViewUsers(OperatingSystem& OS);
 
+	int Action = -1;
+	int op = 0;
+	const size_t SIZE = 6;
+	string NewLines = "\n\n\n\n\n\n";
+	string Tabs = "\t\t";
+	string Controls[SIZE] = {"View Users", "Change Credentials", "Add New User", "Delete User", "Give Admin Control", "Switch User"};
+ 
+
+	while (Action != BACK)
+	{
+		while (!((Action == ENTER) || (Action == BACK)))
+		{
+			cout << CPANEL << UserControls << "\n\n\n\n";
+
+			for (size_t i = 0; i < SIZE; ++i)
+				if (op == i)
+					cout << Tabs << "  --> " << Controls[i] << " <--\n\n\n";
+				else
+					cout << Tabs << Controls[i] << "\n\n\n";
+
+			cout << NewLines << "\t" << SIZE << " Items    1 Item selected \n";
+
+			Action = KeysInput();                                 // Take Input From Keys
+
+			switch (Action)
+			{
+			case BACK:
+				break;
+
+			case DOWN:
+				if (op < (SIZE - 1))
+					if (OS.Administrator())
+						while (true)
+							if ((op == 0) || (op == 1) || (op == 5))
+								break;
+							else
+								++op;
+					else
+						++op;
+				break;
+
+			case ENTER:
+				break;
+
+			case UP:
+				if (op > 0)
+					if (OS.Administrator())
+						while (true)
+							if ((op == 0) || (op == 1) || (op == 5))
+								break;
+							else
+								--op;
+					else
+						--op;
+			}
+			system("CLS");
+		}
+
+		if (Action == ENTER)
+		{
+			Action = -1;                      // Clearing the Action.
+
+			switch (op)
+			{
+			case 0:
+				ViewUsers(OS);
+				break;
+
+			case 1:
+				//NewUser(OS);
+				break;
+
+			case 2:
+				if (Verification(OS))
+					NewUser(OS);
+				break;
+
+			case 3:
+				//Give Admin Control
+				break;
+			
+			case 4:
+				//Switch User"
+				break;
+
+			case 5:
+				//Switch User"
+				break;
+			}
+		}
+	}
+	system("CLS");
 }
 
 void UserCredentials(string& name, string& pass, string& hint, OperatingSystem& OS)
 {
 	string Report = "";
 	string NewLines = "\n\n\n\n\n\n\n\n\n\n";
-	string Tabs = "\t\t\t\t\t\t";
-	string Account = "---Adding New Account---";
+	string Tabs = "\t\t\t\t\t";
+	string Account = " >> | Adding New Account |";
+	string Acc = "---Adding New Account---";
 														// Name Input
-	cout << CPANEL << "\n" << Tabs << Account << NewLines;
+	cout << CPANEL << UserControls << Account << "\n" << Tabs << Acc << NewLines;
 	cout << Tabs << " Type User Name : ";
 	getline(cin, name);
 	Sleep(400);
@@ -1030,14 +1126,14 @@ void UserCredentials(string& name, string& pass, string& hint, OperatingSystem& 
 
 	Trim(name);
 														// Password Input
-	cout << CPANEL << "\n" << Tabs << Account << NewLines;
+	cout << CPANEL << UserControls << Account << "\n" << Tabs << Acc << NewLines;
 	cout << Tabs << " Type User Name : " << name << "\n\n";
 	cout << Tabs << " Type Password : ";
 	getline(cin, pass);
 	Sleep(400);
 	system("CLS");
 														// Hint Input / Final View with Report
-	cout << CPANEL << "\n" << Tabs << Account << NewLines;
+	cout << CPANEL << UserControls << Account << "\n" << Tabs << Acc << NewLines;
 	cout << Tabs << " Type User Name : " << name << "\n\n";
 	cout << Tabs << " Type Password : " << pass << "\n\n";
 
@@ -1048,7 +1144,7 @@ void UserCredentials(string& name, string& pass, string& hint, OperatingSystem& 
 		Sleep(400);
 		system("CLS");
 														// Final View with Report
-		cout << CPANEL << "\n" << Tabs << Account << NewLines;
+		cout << CPANEL << UserControls << Account << "\n" << Tabs << Acc << NewLines;
 		cout << Tabs << " Type User Name : " << name << "\n\n";
 		cout << Tabs << " Type Password : " << pass << "\n\n";
 		cout << Tabs << " Type Password Hint : " << hint << "\n\n";
@@ -1088,7 +1184,7 @@ void ViewDrives(OperatingSystem& OS)
 	string NewLines = "\n\n\n\n\n\n\n\n\n\n\n\n";
 	string Tabs = "\t\t";
 	vector<string> Name;
-	string View = " \>\> | View Drives |";
+	string View = " >> | View Partitions |";
 	size_t Size;
 
 	while (Action != BACK)
@@ -1106,6 +1202,78 @@ void ViewDrives(OperatingSystem& OS)
 
 		cout << "\t" << OS.ItemsCount() << " Items    1 Item selected \n";
 		
+		Action = KeysInput();
+
+		switch (Action)
+		{
+		case DOWN:
+			OS.MoveNext();
+			break;
+
+		case UP:
+			OS.MovePrev();
+		}
+		system("CLS");
+	}
+}
+
+bool Verification(OperatingSystem& OS)
+{
+	string Report = "";
+	string NewLines = "\n\n\n\n\n\n\n";
+	string Tabs = "\t\t\t\t\t";
+	string Pass;
+
+	cout << "\n\n" << Tabs << " Verification" << NewLines << Tabs << "Hint : "
+		 << OS.GetHint() << "\n\n" << Tabs << "Type Password : ";
+	getline(cin, Pass);
+
+	system("CLS");
+
+	cout << "\n\n" << Tabs << " Verification" << NewLines << Tabs << "Hint : "
+		 << OS.GetHint() << "\n\n" << Tabs << "Type Password : " << Pass;
+
+	if (OS.GetPass() == Pass)
+	{
+		cout << NewLines << NewLines << Tabs << " Verified \n\n\n\n";
+
+		Sleep(600);
+		system("CLS");
+
+		return true;
+	}
+	cout << NewLines << NewLines << Tabs << "  Invalid \n\n\n\n";
+
+	Sleep(600);
+	system("CLS");
+
+	return false;
+}
+
+void ViewUsers(OperatingSystem& OS)
+{
+	int Action = -1;
+	string NewLines = "\n\n\n\n\n\n\n\n\n\n\n\n";
+	string Tabs = "\t\t";
+	vector<string> Name;
+	string View = " >> | View Users |";
+	size_t Size;
+
+	while (Action != BACK)
+	{
+		Name = OS.GetUserList();
+		Size = Name.size() - 1;
+
+		cout << CPANEL << UserControls << View << "\n\n\n\n";
+
+		for (size_t i = 0; i < Size; ++i)
+			cout << Tabs << Name[i] << "\n\n\n";
+
+		for (size_t i = 0; i < (24 - (Size * 3)); ++i)
+			cout << "\n";
+
+		cout << "\t" << OS.ItemsCount() << " Items    1 Item selected \n";
+
 		Action = KeysInput();
 
 		switch (Action)
