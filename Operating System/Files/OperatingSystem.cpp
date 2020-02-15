@@ -19,11 +19,42 @@ bool OperatingSystem::Compare(string Str_1, string Str_2)
 	return true;
 }
 
-OperatingSystem& OperatingSystem::Delete(Node*& Ptr)                             // HAHAHAHAHA:
+OperatingSystem& OperatingSystem::Delete(Node*& Ptr)
 {
 	Node* sptr = Ptr;
-	Node* rptr = Ptr->Down;
+	Node* rptr = Ptr;
+	
+	if (Ptr == Head)                                   // If it is use in Destructor.
+	{
+		rptr = sptr;
 
+		while (rptr->Next)
+			rptr = rptr -> Next;
+	}
+
+	if (Ptr->Down)
+		rptr = Ptr->Down;
+
+	while (rptr->Next)                                               // Moving Parallel in List.
+		rptr = rptr->Next;
+
+	if (rptr->Down)                                                 // Moving to Down List
+		Delete (rptr->Down);
+		
+	if (!((rptr->Next) || (rptr->Down)))                           // Ending Node.
+	{
+		Node* ptr = rptr;
+
+		if (!(rptr->Prev))                                       // Deleting the Node 
+			delete ptr;
+		else                                                     // Moving Prev
+		{
+			rptr = rptr->Prev;
+			delete ptr;                                          // Deleting the current Node.
+
+			Delete(rptr);
+		}
+	}
 
 	return *this;
 }
@@ -283,6 +314,8 @@ OperatingSystem& OperatingSystem::AddUser(Node*& Ptr)
 
 void OperatingSystem::ChangeCredentials(string pass, string hint)
 {
+	Uptr->SetPass(pass);
+	Uptr->SetHint(hint);
 }
 
 Node* OperatingSystem::DeleteDrive(Node*& Ptr)
@@ -518,12 +551,15 @@ void OperatingSystem::ReName(string name)
 
 void OperatingSystem::TempDelete(bool deleted)
 {
-	Rptr->SetDeleted(deleted);
+	if ((Rptr->GetType() == _FILE) || (Rptr->GetType() == _FOLDER))
+	{
+		Rptr->SetDeleted(deleted);
 
-	if (Rptr->Next)                                 // Moving pointer away from deleted Node.
-		MoveNext();
-	else
-		MovePrev();
+		if (Rptr->Next)                                 // Moving pointer away from deleted Node.
+			MoveNext();
+		else
+			MovePrev();
+	}
 }
 
 bool OperatingSystem::Exist(string name)
@@ -552,8 +588,4 @@ bool OperatingSystem::Exist(string name)
 OperatingSystem::~OperatingSystem()
 {
 	Delete(Head);
-
-	delete Head;
-	delete Rptr;
-	delete Sptr;
 }

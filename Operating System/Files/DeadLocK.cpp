@@ -595,6 +595,35 @@ void Apps(OperatingSystem& OS)
 	}
 }
 
+void ChangeCredential(OperatingSystem& OS)
+{
+	string NewLines = "\n\n\n\n\n\n\n\n\n\n";
+	string Tabs = "\t\t\t\t\t";
+	string Pass;
+	string Hint;
+	string Credentials = " >> | Change Credentials |";
+
+	cout << CPANEL << UserControls << Credentials << NewLines << Tabs << "Type New Password : ";
+	getline(cin, Pass);
+
+	system("CLS");
+
+	cout << CPANEL << UserControls << Credentials << NewLines << Tabs 
+		 << "Type New Password : " << Pass << "\n\n" << Tabs << "Type Password Hint : ";
+	getline(cin, Hint);
+
+	system("CLS");
+
+	cout << CPANEL << UserControls << Credentials << NewLines << Tabs << "Type New Password : " << Pass
+		 << "\n\n" << Tabs << "Type Password Hint : " << Hint << NewLines << "\n\n\n" << Tabs 
+		 << " User Credentials Updated \n\n\n\n";
+
+	OS.ChangeCredentials(Pass, Hint);
+
+	Sleep(600);
+	system("CLS");
+}
+
 void ControlPanel(OperatingSystem& OS)
 {
 	void DrivesControls(OperatingSystem& OS);
@@ -1013,15 +1042,16 @@ void Time()
 
 void UsersControls(OperatingSystem& OS)
 {
+	void ChangeCredential(OperatingSystem& OS);
 	bool Verification(OperatingSystem& OS);
 	void ViewUsers(OperatingSystem& OS);
 
 	int Action = -1;
 	int op = 0;
-	const size_t SIZE = 6;
+	const size_t SIZE = 5;
 	string NewLines = "\n\n\n\n\n\n";
 	string Tabs = "\t\t";
-	string Controls[SIZE] = {"View Users", "Change Credentials", "Add New User", "Delete User", "Give Admin Control", "Switch User"};
+	string Controls[SIZE] = {"View Users", "Change Credentials", "Add New User", "Delete User", "Switch User"};
  
 
 	while (Action != BACK)
@@ -1085,7 +1115,8 @@ void UsersControls(OperatingSystem& OS)
 				break;
 
 			case 1:
-				//NewUser(OS);
+				if (Verification(OS))
+					ChangeCredential(OS);
 				break;
 
 			case 2:
@@ -1094,16 +1125,12 @@ void UsersControls(OperatingSystem& OS)
 				break;
 
 			case 3:
-				//Give Admin Control
+				if (Verification(OS))
+				//DELETEUSER()
 				break;
 			
 			case 4:
-				//Switch User"
-				break;
-
-			case 5:
-				//Switch User"
-				break;
+				//Switch User
 			}
 		}
 	}
