@@ -333,9 +333,22 @@ bool OperatingSystem::Empty()
 	return true;
 }
 
-Node* OperatingSystem::FormatDrive(Node*& Ptr)
+OperatingSystem& OperatingSystem::FormatDrive()
 {
-	return nullptr;
+	if (Rptr->Down)
+	{
+		Node* Ptr;
+
+		Rptr = Rptr->Down;
+
+		while (Rptr)
+		{
+			Ptr = Remove();
+			Delete(Ptr);
+		}
+	}
+
+	return *this;
 }
 
 bool OperatingSystem::GetDeleted()

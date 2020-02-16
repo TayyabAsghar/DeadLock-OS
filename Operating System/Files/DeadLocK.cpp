@@ -439,6 +439,7 @@ void Apps(OperatingSystem& OS)
 	const size_t SIZE = 7;                        // Option array Size.
 	size_t loop;
 	string NewLines = "\n\n\n    ";
+	string NewLine = "\n\n\n\n\n\n\n\n";
 	string Tabs = "\t\t\t\t\t";
 	string Options[SIZE] = { "Open", "Add Folder", "Add File", "Rename", "Format", "Delete", "Refresh"};
 
@@ -484,7 +485,7 @@ void Apps(OperatingSystem& OS)
 				++loop;
 			}
 
-			cout << "\n\n\n\n\n\n\n\n";
+			cout << NewLine;
 
 			Action = KeysInput();                                 // Take Input From Keys
 
@@ -576,7 +577,16 @@ void Apps(OperatingSystem& OS)
 				break;
 
 			case 4:
-				//Format();
+				if (OS.GetType() == _DRIVE)
+				{
+					system("CLS");
+
+					cout << NewLine << NewLine << Tabs 
+						<< "Partition Formated and All Data in it is Gone..." << NewLine << NewLine;
+
+					Sleep(1000);
+					OS.FormatDrive();
+				}
 				break;
 
 			case 5:
@@ -763,8 +773,8 @@ void DeleteDrive(OperatingSystem& OS)        // TODO: there is an error in Prese
 void DrivesControls(OperatingSystem& OS)
 {
 	void DeleteDrive(OperatingSystem& OS);
+	void Format(OperatingSystem & OS);
 	void ViewDrives(OperatingSystem& OS);
-	void Format(OperatingSystem& OS);
 
 	int Action = -1;
 	int op = 0;
@@ -929,6 +939,58 @@ string FileType()
 		system("CLS");
 	}
 	return "";                                                // To show nothing is selected.
+}
+
+void Format(OperatingSystem& OS)
+{
+	int Action = -1;
+	string NewLines = "\n\n\n\n\n\n\n\n\n\n\n\n";
+	string Tabs = "\t\t";
+	vector<string> Name;
+	string format = " >> | Format Partition |";
+	size_t Size;
+
+	OS.MoveStart();
+
+	while (Action != BACK)
+	{
+		Name = OS.GetList();
+		Size = Name.size() - 1;
+
+		cout << CPANEL << DriveControls << format << "\n\n\n\n";
+
+		for (size_t i = 0; i < Size; ++i)
+			cout << Tabs << Name[i] << "\n\n\n";
+
+		for (size_t i = 0; i < (24 - (Size * 3)); ++i)
+			cout << "\n";
+
+		cout << "\t" << OS.ItemsCount() << " Items    1 Item selected \n";
+
+		Action = KeysInput();
+
+		switch (Action)
+		{
+		case DOWN:
+			OS.MoveNext();
+			break;
+
+		case ENTER:
+			system("CLS");
+
+			cout << CPANEL << DriveControls << format;
+			cout << NewLines << Tabs << "Partition Formated and All Data in it is Gone..."
+				<< NewLines << "\n\n\n\n\n";
+
+			Sleep(800);
+			OS.FormatDrive();
+			break;
+
+		case UP:
+			OS.MovePrev();
+		}
+		system("CLS");
+	}
 }
 
 void LogInWindow(OperatingSystem& OS)

@@ -25,7 +25,7 @@ public:
 	void ChangeCredentials(string pass, string hint);
 	OperatingSystem& PermanentDelete();
 	bool Empty();                                      // To see whether Rptr is Null Or Not
-	Node* FormatDrive(Node*& Ptr);
+	OperatingSystem& FormatDrive();
 	bool GetDeleted();                                 // To see the Node is Temporarily deleted or Not.
 	vector<string> GetDeletedList();                   // To get List of Temporarily deleted Files.
 	string GetHint();                                  // To get Hint of Password of Current User.
