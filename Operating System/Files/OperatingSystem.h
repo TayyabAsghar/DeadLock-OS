@@ -23,10 +23,7 @@ public:
 	OperatingSystem& AddFolder(Node*& Ptr);
 	OperatingSystem& AddUser(Node*& Ptr);
 	void ChangeCredentials(string pass, string hint);
-	Node* DeleteDrive(Node*& Ptr);
-	Node* DeleteFiles(Node*& Ptr);
-	Node* DeleteFolder(Node*& Ptr);
-	Node* DeleteUser(Node*& Ptr);
+	OperatingSystem& PermanentDelete();
 	bool Empty();                                      // To see whether Rptr is Null Or Not
 	Node* FormatDrive(Node*& Ptr);
 	bool GetDeleted();                                 // To see the Node is Temporarily deleted or Not.
@@ -42,9 +39,10 @@ public:
 	void MoveNext();
 	void MoveOut();
 	void MovePrev();
-	void MoveStart();
+	void MoveStart();                             // Move Rptr to Node of current Layer of Data Structure.
+	void MoveTop();                               // Move all Pointers to very First Node of Data Structure.
 	void ReName(string name);
-	void TempDelete(bool deleted);
+	void TempDelete();
 	bool Exist(string name);
 	~OperatingSystem();
 };

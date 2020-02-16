@@ -371,9 +371,7 @@ void Trim(string& Str)
 	Lenght = Str.find_last_not_of(" \t");
 
 	if (string::npos != Lenght)
-	{
 		Str.erase(Lenght + 1);
-	}
 }
 
 void UserSelection(OperatingSystem& OS)
@@ -387,7 +385,7 @@ void UserSelection(OperatingSystem& OS)
 	string NewLines = "\n\n\n\n\n\n\n";
 	string Tabs = "\t\t\t\t\t";
 
-	OS.MoveStart();
+	OS.MoveTop();
 
 	while (!((Action == ENTER) || (Action == EXIT)))
 	{
@@ -583,7 +581,7 @@ void Apps(OperatingSystem& OS)
 
 			case 5:
 				if (OS.GetType() != _DRIVE)
-					OS.TempDelete(true);
+					OS.TempDelete();
 				break;
 
 			case 6:
@@ -638,61 +636,135 @@ void ControlPanel(OperatingSystem& OS)
 
 	while (Action != BACK)
 	{
-		while (!((Action == ENTER) || (Action == BACK)))
+		cout << CPANEL << "\n\n\n\n";
+
+		for (size_t i = 0; i < SIZE; ++i)
+			if (op == i)
+				cout << Tabs << "  --> " << Controls[i] << " <--\n\n\n";
+			else
+				cout << Tabs << Controls[i] << "\n\n\n";
+
+		cout << NewLines << "\t" << SIZE << " Items    1 Item selected \n";
+
+		Action = KeysInput();                                 // Take Input From Keys
+
+		switch (Action)
 		{
-			cout << CPANEL << "\n\n\n\n";
+		case BACK:
+			break;
 
-			for (size_t i = 0; i < SIZE; ++i)
-				if (op == i)
-					cout << Tabs << "  --> " << Controls[i] << " <--\n\n\n";
-				else
-					cout << Tabs << Controls[i] << "\n\n\n";
+		case DOWN:
+			if (op < (SIZE - 1))
+				++op;
+			break;
 
-			cout << NewLines << "\t" << SIZE << " Items    1 Item selected \n";
-
-			Action = KeysInput();                                 // Take Input From Keys
-
-			switch (Action)
-			{
-			case BACK:
-				break;
-
-			case DOWN:
-				if (op < (SIZE - 1))
-					++op;
-				break;
-
-			case ENTER:
-				break;
-
-			case UP:
-				if (op > 0)
-					--op;
-			}
+		case ENTER:
 			system("CLS");
-		}
-
-		if (Action == ENTER)
-		{
-			Action = -1;                      // Clearing the Action.
 
 			switch (op)
 			{
 			case 0:
-				UsersControls (OS);
+				UsersControls(OS);
 				break;
 
 			case 1:
-				DrivesControls (OS);
+				DrivesControls(OS);
+			}
+			break;
+
+		case UP:
+			if (op > 0)
+				--op;
+		}
+		system("CLS");
+	}
+}
+
+void DeleteDrive(OperatingSystem& OS)        // TODO: there is an error in Presentation
+{
+	int Action = -1;
+	size_t op = 0;
+	string NewLines = "\n\n\n\n\n\n\n\n\n\n\n\n";
+	string Tabs = "\t\t";
+	vector<string> Name;
+	string Del = " >> | Delete Partition |";
+	size_t Size;
+
+												   //Moving to start then skipping [(C):] and [(D):] Drive.
+	OS.MoveStart();
+	OS.MoveNext();
+	OS.MoveNext();
+
+	while (Action != BACK)
+	{
+		Name = OS.GetList();
+	    Size = Name.size() - 3;                                   // Adjusting the Size for format.
+
+		cout << CPANEL << DriveControls << Del << "\n\n\n\n";
+
+		for (size_t i = 0; i < Size; ++i)
+			cout << Tabs << Name[i+2] << "\n\n\n";               // Not Printing the [C] and [D] Drives
+		if (Size != 0)
+		{
+			for (size_t i = 0; i < (24 - (Size * 3)); ++i)
+				cout << "\n";
+
+			cout << "\t" << OS.ItemsCount() - 2 << " Items    1 Item selected \n";
+		}
+		else
+		{
+			cout << "\n\n\n\n" << Tabs << "There are No user Created Partitions to Delete.\n";
+			cout << Tabs << "You can't Delete [(C):] and [(D):] Partition but you can Format them.";
+
+			for (size_t i = 0; i < 19; ++i)
+				cout << "\n";
+
+			cout << "\t0 Items    0 Item selected \n";
+		}
+
+		Action = KeysInput();
+
+		switch (Action)
+		{
+		case DOWN:
+			if (op < Size)
+			{
+				OS.MoveNext();
+				++op;
+			}
+			break;
+
+		case DEL:
+		case ENTER:
+			if(Size != 0)
+			{
+				system("CLS");
+
+				cout << CPANEL << DriveControls << Del;
+				cout << NewLines << Tabs << "Partition Deleted and All Data with it..."
+					 << NewLines << "\n\n\n\n";
+
+				Sleep(600);
+				OS.PermanentDelete();
+			}
+			break;
+
+		case UP:
+			if (op > 1)
+			{
+				OS.MovePrev();
+				--op;
 			}
 		}
+		system("CLS");
 	}
-	system("CLS");
 }
 
 void DrivesControls(OperatingSystem& OS)
 {
-	void ViewDrives(OperatingSystem & OS);
+	void DeleteDrive(OperatingSystem& OS);
+	void ViewDrives(OperatingSystem& OS);
+	void Format(OperatingSystem& OS);
 
 	int Action = -1;
 	int op = 0;
@@ -703,43 +775,30 @@ void DrivesControls(OperatingSystem& OS)
 
 	while (Action != BACK)
 	{
-		while (!((Action == ENTER) || (Action == BACK)))
+		cout << CPANEL << DriveControls << "\n\n\n\n";
+
+		for (size_t i = 0; i < SIZE; ++i)
+			if (op == i)
+				cout << Tabs << "  --> " << Controls[i] << " <--\n\n\n";
+			else
+				cout << Tabs << Controls[i] << "\n\n\n";
+
+		cout << NewLines << "\t" << SIZE << " Items    1 Item selected \n";
+
+		Action = KeysInput();                                 // Take Input From Keys
+
+		switch (Action)
 		{
-			cout << CPANEL << DriveControls << "\n\n\n\n";
+		case BACK:
+			break;
 
-			for (size_t i = 0; i < SIZE; ++i)
-				if (op == i)
-					cout << Tabs << "  --> " << Controls[i] << " <--\n\n\n";
-				else
-					cout << Tabs << Controls[i] << "\n\n\n";
+		case DOWN:
+			if (op < (SIZE - 1))
+				++op;
+			break;
 
-			cout << NewLines << "\t" << SIZE << " Items    1 Item selected \n";
-
-			Action = KeysInput();                                 // Take Input From Keys
-
-			switch (Action)
-			{
-			case BACK:
-				break;
-
-			case DOWN:
-				if (op < (SIZE - 1))
-					++op;
-				break;
-
-			case ENTER:
-				break;
-
-			case UP:
-				if (op > 0)
-					--op;
-			}
+		case ENTER:
 			system("CLS");
-		}
-
-		if (Action == ENTER)
-		{
-			Action = -1;                      // Clearing the Action.
 
 			switch (op)
 			{
@@ -752,16 +811,21 @@ void DrivesControls(OperatingSystem& OS)
 				break;
 
 			case 2:
-				// Delete()
+				DeleteDrive(OS);
 				break;
 
 			case 3:
-				//Format();
+				Format(OS);
 				break;
 			}
+			break;
+
+		case UP:
+			if (op > 0)
+				--op;
 		}
+		system("CLS");
 	}
-	system("CLS");
 }
 
 void DriveCredentials(string& name, OperatingSystem& OS)
@@ -840,7 +904,22 @@ string FileType()
 				++File;
 			break;
 
-		case ENTER:                                         // To break through the loop.
+		case ENTER:
+			switch (File)                                        // File Selection.
+			{
+			case 0:
+				return Files[File] + ".accdb";
+			case 1:
+				return Files[File] + ".docx";
+			case 2:
+				return Files[File] + ".pptx";
+			case 3:
+				return Files[File] + ".pub";
+			case 4:
+				return Files[File] + ".txt";
+			case 5:
+				return Files[File] + ".xlsx";
+			}
 			break;
 
 		case UP:
@@ -848,25 +927,6 @@ string FileType()
 				--File;
 		}
 		system("CLS");
-	}
-		                                                        // File Selection
-	if (Action == ENTER)
-	{
-		switch (File)
-		{
-		case 0:
-			return Files[File] + ".accdb";
-		case 1:
-			return Files[File] + ".docx";
-		case 2:
-			return Files[File] + ".pptx";
-		case 3:
-			return Files[File] + ".pub";
-		case 4:
-			return Files[File] + ".txt";
-		case 5:
-			return Files[File] + ".xlsx";
-		}
 	}
 	return "";                                                // To show nothing is selected.
 }
@@ -915,6 +975,8 @@ void ThisPC(OperatingSystem& OS)
 	size_t Size;
 	string Tabs = "\t\t\t";
 
+	OS.MoveStart();
+
 	while ((Action != EXIT) && KeepRuning)
 	{
 		Name = OS.GetList();                              // Getting Drives/Files/Folder names.
@@ -961,7 +1023,7 @@ void ThisPC(OperatingSystem& OS)
 
 		case DEL:
 			if(OS.GetType() != _DRIVE)
-				OS.TempDelete(true);
+				OS.TempDelete();
 			break;
 
 		case DOWN:
@@ -1056,57 +1118,37 @@ void UsersControls(OperatingSystem& OS)
 
 	while (Action != BACK)
 	{
-		while (!((Action == ENTER) || (Action == BACK)))
-		{
-			cout << CPANEL << UserControls << "\n\n\n\n";
+		cout << CPANEL << UserControls << "\n\n\n\n";
 
-			for (size_t i = 0; i < SIZE; ++i)
-				if (op == i)
-					cout << Tabs << "  --> " << Controls[i] << " <--\n\n\n";
+		for (size_t i = 0; i < SIZE; ++i)
+			if (op == i)
+				cout << Tabs << "  --> " << Controls[i] << " <--\n\n\n";
+			else
+				cout << Tabs << Controls[i] << "\n\n\n";
+
+		cout << NewLines << "\t" << SIZE << " Items    1 Item selected \n";
+
+		Action = KeysInput();                                 // Take Input From Keys
+
+		switch (Action)
+		{
+		case BACK:
+			break;
+
+		case DOWN:
+			if (op < (SIZE - 1))
+				if (OS.Administrator())
+					while (true)
+						if ((op == 0) || (op == 1) || (op == 5))
+							break;
+						else
+							++op;
 				else
-					cout << Tabs << Controls[i] << "\n\n\n";
+					++op;
+			break;
 
-			cout << NewLines << "\t" << SIZE << " Items    1 Item selected \n";
-
-			Action = KeysInput();                                 // Take Input From Keys
-
-			switch (Action)
-			{
-			case BACK:
-				break;
-
-			case DOWN:
-				if (op < (SIZE - 1))
-					if (OS.Administrator())
-						while (true)
-							if ((op == 0) || (op == 1) || (op == 5))
-								break;
-							else
-								++op;
-					else
-						++op;
-				break;
-
-			case ENTER:
-				break;
-
-			case UP:
-				if (op > 0)
-					if (OS.Administrator())
-						while (true)
-							if ((op == 0) || (op == 1) || (op == 5))
-								break;
-							else
-								--op;
-					else
-						--op;
-			}
+		case ENTER:
 			system("CLS");
-		}
-
-		if (Action == ENTER)
-		{
-			Action = -1;                      // Clearing the Action.
 
 			switch (op)
 			{
@@ -1126,15 +1168,28 @@ void UsersControls(OperatingSystem& OS)
 
 			case 3:
 				if (Verification(OS))
-				//DELETEUSER()
+					//DELETEUSER()
 				break;
-			
+
 			case 4:
 				//Switch User
+				break;
 			}
+			break;
+
+		case UP:
+			if (op > 0)
+				if (OS.Administrator())
+					while (true)
+						if ((op == 0) || (op == 1) || (op == 5))
+							break;
+						else
+							--op;
+				else
+					--op;
 		}
+		system("CLS");
 	}
-	system("CLS");
 }
 
 void UserCredentials(string& name, string& pass, string& hint, OperatingSystem& OS)
@@ -1213,6 +1268,8 @@ void ViewDrives(OperatingSystem& OS)
 	vector<string> Name;
 	string View = " >> | View Partitions |";
 	size_t Size;
+
+	OS.MoveStart();
 
 	while (Action != BACK)
 	{

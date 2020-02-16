@@ -22,31 +22,29 @@ bool OperatingSystem::Compare(string Str_1, string Str_2)
 OperatingSystem& OperatingSystem::Delete(Node*& Ptr)
 {
 	Node* sptr = Ptr;
-	Node* rptr = Ptr;
+	Node* rptr;
 	
 	if (Ptr == Head)                                   // If it is use in Destructor.
-	{
 		rptr = sptr;
+	else
+		rptr = sptr->Down;
 
-		while (rptr->Next)
-			rptr = rptr -> Next;
-	}
-
-	if (Ptr->Down)
-		rptr = Ptr->Down;
-
-	while (rptr->Next)                                               // Moving Parallel in List.
+	while (rptr->Next)                                            // Moving Parallel in List.
 		rptr = rptr->Next;
 
-	if (rptr->Down)                                                 // Moving to Down List
+	if (rptr->Down)                                              // Moving to Down List
 		Delete (rptr->Down);
-		
-	if (!((rptr->Next) || (rptr->Down)))                           // Ending Node.
+	else                                                         // Ending Node.
 	{
 		Node* ptr = rptr;
 
 		if (!(rptr->Prev))                                       // Deleting the Node 
-			delete ptr;
+		{
+			if (!(rptr->Up))
+				delete ptr;
+			//else
+
+		}
 		else                                                     // Moving Prev
 		{
 			rptr = rptr->Prev;
@@ -318,24 +316,13 @@ void OperatingSystem::ChangeCredentials(string pass, string hint)
 	Uptr->SetHint(hint);
 }
 
-Node* OperatingSystem::DeleteDrive(Node*& Ptr)
+OperatingSystem& OperatingSystem::PermanentDelete()
 {
-	return nullptr;
-}
+	Node* Ptr = Remove();
 
-Node* OperatingSystem::DeleteFiles(Node*& Ptr)
-{
-	return nullptr;
-}
+	Delete(Ptr);
 
-Node* OperatingSystem::DeleteFolder(Node*& Ptr)
-{
-	return nullptr;
-}
-
-Node* OperatingSystem::DeleteUser(Node*& Ptr)
-{
-	return nullptr;
+	return *this;
 }
 
 bool OperatingSystem::Empty()
@@ -518,7 +505,13 @@ void OperatingSystem::MovePrev()
 
 void OperatingSystem::MoveStart()
 {
-	Rptr = Sptr = Head;	
+	while (Rptr->Prev)
+		Rptr = Rptr->Prev;
+}
+
+void OperatingSystem::MoveTop()
+{
+	Rptr = Sptr = Uptr = Head;
 }
 
 void OperatingSystem::ReName(string name)
@@ -549,16 +542,18 @@ void OperatingSystem::ReName(string name)
 	}
 }
 
-void OperatingSystem::TempDelete(bool deleted)
+void OperatingSystem::TempDelete()
 {
 	if ((Rptr->GetType() == _FILE) || (Rptr->GetType() == _FOLDER))
 	{
-		Rptr->SetDeleted(deleted);
+		Rptr->SetDeleted(true);
 
 		if (Rptr->Next)                                 // Moving pointer away from deleted Node.
 			MoveNext();
-		else
+		else if (Rptr->Prev)
 			MovePrev();
+		else
+			Rptr = NULL;
 	}
 }
 
