@@ -2,6 +2,7 @@
 #define OperatingSystem_H
 #pragma once
 #include <algorithm>
+#include <fstream>
 #include <string>
 #include <vector>
 #include "Node.h"
@@ -25,6 +26,7 @@ public:
 	void ChangeCredentials(string pass, string hint);
 	OperatingSystem& PermanentDelete();
 	bool Empty();                                      // To see whether Rptr is Null Or Not
+	string FileData();
 	OperatingSystem& FormatDrive();
 	bool GetDeleted();                                 // To see the Node is Temporarily deleted or Not.
 	vector<string> GetDeletedList();                   // To get List of Temporarily deleted Files.

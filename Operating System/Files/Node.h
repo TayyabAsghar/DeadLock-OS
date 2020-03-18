@@ -1,7 +1,7 @@
 #ifndef Node_H
 #define Node_H
 #pragma once
-#include <fstream>
+#include <string>
 
 using namespace std;
                                                             // Defining Constexpr

@@ -36,20 +36,20 @@ int main()
 {
 	OperatingSystem DeadLocK;
 
-	NewUser(DeadLocK);
+	NewUser(DeadLocK);                                    // Testing phase
 
-	//do                                                   // Start and Restart Loop;
-	//{
-	//	StartingWindow();
-	//	
-	//	do                                              // User Selection Loop;
-	//	{
-	//		UserSelection(DeadLocK);
+	do                                                   // Start and Restart Loop;
+	{
+		StartingWindow();
+		
+		do                                              // User Selection Loop;
+		{
+			UserSelection(DeadLocK);
 			Desktop(DeadLocK);
 
-	//	} while (true);
+		} while (true);
 
-	//} while (true);
+	} while (true);
 			
 
 	   return 0;
@@ -1028,7 +1028,8 @@ void RecycleBin(OperatingSystem& OS)
 
 void ThisPC(OperatingSystem& OS)
 {
-	void Apps(OperatingSystem & OS);
+	void Apps(OperatingSystem& OS);
+	void ViewFile(OperatingSystem& OS);
 
 	int Action = -1;
 	bool KeepRuning = true;
@@ -1097,7 +1098,10 @@ void ThisPC(OperatingSystem& OS)
 			break;
 
 		case ENTER:
-			OS.MoveIn();
+			if (OS.GetType() != _FILE)
+				OS.MoveIn();
+			else
+				ViewFile(OS);
 			break;
 
 		case F2:
@@ -1394,6 +1398,11 @@ bool Verification(OperatingSystem& OS)
 	system("CLS");
 
 	return false;
+}
+
+void ViewFile(OperatingSystem& OS)
+{
+	OS.FileData();
 }
 
 void ViewUsers(OperatingSystem& OS)

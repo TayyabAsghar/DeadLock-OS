@@ -333,6 +333,11 @@ bool OperatingSystem::Empty()
 	return true;
 }
 
+string OperatingSystem::FileData()
+{
+	return string();
+}
+
 OperatingSystem& OperatingSystem::FormatDrive()
 {
 	if (Rptr->Down)
@@ -518,6 +523,9 @@ void OperatingSystem::MovePrev()
 
 void OperatingSystem::MoveStart()
 {
+	if (Rptr->GetType() == _USER)                   // To Move Rptr on drives when comes from user.
+		Rptr = Rptr->Down;
+
 	while (Rptr->Prev)
 		Rptr = Rptr->Prev;
 }
